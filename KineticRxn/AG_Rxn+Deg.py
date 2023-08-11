@@ -473,7 +473,7 @@ plt.xlabel('t')
 # plt.ylabel('Concentration')
 plt.plot(t[idx],true_yex[idx,0],'ko',t[idx],true_yex[idx,1],'ko')
 plt.plot(t[idx],true_yex[idx,2],'ko')#,t[idx],true_yex[idx,3],'go')
-plt.legend(['Ca','Cb','Cc','True data'])
+plt.legend(['Ca','Cb','Cc','True response'],bbox_to_anchor=(1.04, 1),)
 plt.savefig('visuals/Extrap',dpi=300)
 plt.show()
 
