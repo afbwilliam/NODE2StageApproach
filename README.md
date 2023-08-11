@@ -33,7 +33,7 @@ Longer  Intervals          |  Shorter Intervals
 
 *Progression of Neural ODE training by simulating the NODE over 9 datapoints (left) or 2 datapoints (right) during training.  NODE predictions in green.  Dots represent measured points and dashed red and blue lines the true dynamics.  Simulation of trained NODE over full 10 datapoints represented by black lines.*
 
-Ultimately, a useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does cause the fitted Neural ODE to over-smooth the data.  
+Ultimately, a useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does not cause the fitted Neural ODE to over-smooth the data.  
 
 ## References
 Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the paper:
