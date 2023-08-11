@@ -474,7 +474,7 @@ plt.xlabel('t')
 plt.plot(t[idx],true_yex[idx,0],'ko',t[idx],true_yex[idx,1],'ko')
 plt.plot(t[idx],true_yex[idx,2],'ko')#,t[idx],true_yex[idx,3],'go')
 plt.legend(['Ca','Cb','Cc','True data'])
-plt.show()
 plt.savefig('visuals/Extrap',dpi=300)
+plt.show()
 
 sys.exit()
