@@ -1,5 +1,5 @@
 # NODE 2-Stage Approach
- Examples to illustrate NODE 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for successful estimation of system dynamics from training data.  
+The examples in this repository illustrate the NODE 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for successful estimation of system dynamics from training data.  
 
 ## Requirements
 
