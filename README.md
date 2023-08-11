@@ -21,6 +21,7 @@ To optimally train a Neural ODE, Neural ODE hyperparameters must be tuned to avo
 Longer Intervals           |  Shorter Intervals
 :-------------------------:|:-------------------------:
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/GIFs/LoVoIC.gif) | ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/GIFs/LoVoICs.gif)
+
 *Progression of Neural ODE training by simulating the NODE over a single time interval (left) vs simulating the NODE from multiple initial conditions (right).  NODE predictions in green.  Dots represent measured points and dashed red and blue lines the true dynamics.*
 
 Nevertheless, intervals of integration should not be so short as to encourage Neural ODE overfitting, especially problematic when data is noisy.  Shown below is the process of fitting a Neural ODE to noisy data for different lengths of integration.  Although the Neural ODE captures the dynamics when trained for both cases, only the Neural ODE trained with longer intervals is able to simulate (as shown with black lines) the long-range dynamics after training.
@@ -28,6 +29,7 @@ Nevertheless, intervals of integration should not be so short as to encourage Ne
 Longer  Intervals          |  Shorter Intervals
 :-------------------------:|:-------------------------:
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/GIFs/8stepsFHN.gif) | ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/GIFs/2stepsFHN.gif)
+
 *Progression of Neural ODE training by simulating the NODE over 2 datapoints (left) or 9 datapoints (right) during training.  NODE predictions in green.  Dots represent measured points and dashed red and blue lines the true dynamics.  Simulation of trained NODE over full 10 datapoints represented by black lines.*
 
 Ultimately, a useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does cause the fitted Neural ODE to over-smooth the data.  
