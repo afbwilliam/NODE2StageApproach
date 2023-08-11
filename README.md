@@ -1,5 +1,5 @@
 # NODE 2-Stage Approach
-The examples in this repository illustrate the NODE 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for successful estimation of system dynamics from training data.  
+The examples in this repository illustrate the Nueral ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for successful estimation of system dynamics from training data.  
 
 ## Requirements
 
@@ -8,16 +8,16 @@ Code was tested using the following Python modules:
 * Python 3.10.11
 * Pytorch 1.12.1
 
-# The Advantage of Hybridizing First-Principles and Machine Learning
+## The Advantage of Hybridizing First-Principles and Machine Learning
 A simple example of using the Neural ODE 2-stage approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
 
-In this example, the Neural ODE readily fits the measured time-series data.  However, when the fitted Neural ODE later simulates the same system for conditions outside the range of training data, as shown in the below graphic the predictions of the fitted Neural ODE diverge from the true dyanmics.  In contrast, if the Neural ODE derivative estimates are used to train the parameters of a correctly formulated (i.e., first-principles or mechanistically-inspired) ODE model, this model can be more accurate, even when predicting the system dynamics for conditions outside the range of the original training data.
+In this example, the Neural ODE readily fits the measured time-series data.  However, when the fitted Neural ODE later simulates the same system for conditions outside the range of training data, as shown in the below graphic, the predictions of the fitted Neural ODE diverge from the true dyanmics.  In contrast, if Neural ODE derivative estimates are used to train the parameters of a correctly formulated (i.e., first-principles or mechanistically-inspired) ODE model, this model can be more accurate, even when predicting the system dynamics for conditions outside the range of the original training data.
 
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/Extrap.png)
 *Simulations of fitted Neural ODE (left) and fitted mechanistic ODE (right) on extrapolating conditions*
 
-# Multiple Overlapping Integration Intervals – Effect on Over-fitting and Over-Smoothing Data
-To optimally train a Neural ODE, Neural ODE hyperparameters must be tuned to avoid issues of both overfitting and “over-smoothing”.  A key hyperparameter for this is the length of the interval of integration used during training.  To help visualize how breaking integration into multiple intervals prevents over-smoothing, Neural ODE training on data from the Lotka-Volterra system is illustrated below using two different lengths of integration.  Clearly, simulating the Neural ODE across the longer interval of integration at every iteration of training ultimately converges to a model that “over-smooths” the dynamics.  In contrast, by breaking the Neural ODE predictions to cover shorter, overlapping intervals, the NODE captures the true dynamics and can avoid the local minimum wherein the model over-smooths the system response.
+## Multiple Overlapping Integration Intervals – Effect on Over-fitting and Over-Smoothing Data
+To optimally train a Neural ODE, Neural ODE hyperparameters must be tuned to avoid issues of both overfitting and over-smoothing.  A key hyperparameter for this is the length of the interval of integration used during training.  To help visualize how breaking integration into multiple intervals prevents over-smoothing, Neural ODE training on data from the Lotka-Volterra system is illustrated below using two different lengths of integration.  Clearly, simulating the Neural ODE across the longer interval of integration at every iteration of training ultimately converges to a model that “over-smooths” the dynamics.  In contrast, by breaking the Neural ODE predictions to cover shorter, overlapping intervals, the NODE captures the true dynamics and can avoid the local minimum wherein the model over-smooths the system response.
 
 Longer Intervals           |  Shorter Intervals
 :-------------------------:|:-------------------------:
@@ -35,7 +35,7 @@ Longer  Intervals          |  Shorter Intervals
 
 Ultimately, a useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does cause the fitted Neural ODE to over-smooth the data.  
 
-# References
+## References
 Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the paper:
 
 Bradley, W. and F. Boukouvala, *Two-Stage Approach to Parameter Estimation of Differential Equations Using Neural ODEs.* Industrial & Engineering Chemistry Research, 2021. [[paper]](https://pubs.acs.org/doi/10.1021/acs.iecr.1c00552)
