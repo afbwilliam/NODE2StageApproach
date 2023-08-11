@@ -12,6 +12,7 @@ Code was tested using the following Python modules:
 A simple example of how a Neural ODE can fit time-series data can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
 In this example, the Neural ODE readily fits the measured state data, but as shown in the below graphic, when simulation conditions greatly differ from training data, the Neural ODE prediction diverge from the true dyanmics.  In contrast, if the Neural ODE derivative estimates are used to train the parameters of a correctly formulated (i.e., first-principles or mechanistically-inspired) ODE model, this model can accurately predict the dynamics of the underlying system for conditions far beyond the range of the original training data.
 
+![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/Extrap.png)
 
 # References
 Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the paper:
