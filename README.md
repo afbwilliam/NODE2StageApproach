@@ -9,10 +9,10 @@ Code was tested using the following Python modules:
 * Pytorch 1.12.1
 
 ## Background
-Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train.  Merging the benefits of both modeling approaches, the 2-stage Approach enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
+Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train.  Merging the benefits of both modeling approaches, the NODE 2-Stage Approach enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
 
 ## The Advantage of Hybridizing First-Principles and Machine Learning
-A simple example of using the Neural ODE 2-stage approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
+A simple example of using the Neural ODE 2-Stage Approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
 
 In this example, the Neural ODE readily fits the measured time-series data.  However, when the fitted Neural ODE later simulates the same system for conditions outside the range of training data, as shown in the below graphic, the predictions of the fitted Neural ODE diverge from the true dyanmics.  In contrast, if Neural ODE derivative estimates are used to train the parameters of a correctly formulated (i.e., first-principles or mechanistically-inspired) ODE model, this model can be more accurate, even when predicting the system dynamics for conditions outside the range of the original training data.
 
@@ -36,7 +36,7 @@ Longer  Intervals          |  Shorter Intervals
 
 *Progression of Neural ODE training by simulating the NODE over 9 datapoints (left) or 2 datapoints (right) during training.  NODE predictions in green.  Dots represent measured points and dashed red and blue lines the true dynamics.  Simulation of trained NODE over full 10 datapoints represented by black lines.*
 
-Ultimately, a useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does not cause the fitted Neural ODE to over-smooth the data.  
+A useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does not cause the fitted Neural ODE to over-smooth the data.  
 
 ## References
 Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the paper:
