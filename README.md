@@ -1,5 +1,5 @@
 # NODE 2-Stage Approach
-The examples in this repository illustrate the Nueral ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for hyperparameter tuning of Neural ODEs to better enable them to learn system dynamics from training data.
+The examples in this repository illustrate the Neural ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for hyperparameter tuning of Neural ODEs to better enable them to learn system dynamics from training data.
 
 ## Requirements
 
@@ -9,7 +9,9 @@ Code was tested using the following Python modules:
 * Pytorch 1.12.1
 
 ## Background
-Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train.  Merging the benefits of both modeling approaches, the NODE 2-Stage Approach consists of 1) fitting a Neural ODE to time-series or spatial data and 2) using the Neural ODE’s derivative estimates to estimate the parameters of a mechanistic ODE.  This enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
+Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train when directly fit to data.  Merging the benefits of both modeling approaches, the NODE 2-Stage (i.e., Indirect) Approach consists of 1) fitting a Neural ODE to time-series or spatial data and 2) using the Neural ODE’s derivative estimates to estimate the parameters of a mechanistic ODE.  This enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
+
+![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/2-stage-approach.png)
 
 ## The Advantage of Hybridizing First-Principles and Machine Learning
 A simple example of using the Neural ODE 2-Stage Approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
