@@ -30,7 +30,7 @@ Longer Intervals           |  Shorter Intervals
 
 *Progression of Neural ODE training by simulating the NODE over a single time interval (left) vs simulating the NODE from multiple initial conditions (right).  NODE predictions in green.  Dots represent measured points and dashed red and blue lines the true dynamics.*
 
-Nevertheless, intervals of integration should not be so short as to encourage Neural ODE overfitting, especially problematic when data is noisy.  Shown below is the process of fitting a Neural ODE to noisy data for different lengths of integration.  Although the Neural ODE captures the dynamics for both cases during trained, only the Neural ODE trained with longer intervals is able to simulate (as shown with black lines) the long-range dynamics after training.
+Nevertheless, intervals of integration should not be so short as to encourage Neural ODE overfitting, especially problematic when data is noisy.  Shown below is the process of fitting a Neural ODE to noisy data for different lengths of integration.  Although the Neural ODE captures the dynamics for both cases during training, only the Neural ODE trained with longer intervals is able to simulate (as shown with black lines) the long-range dynamics after training.
 
 Longer  Intervals          |  Shorter Intervals
 :-------------------------:|:-------------------------:
