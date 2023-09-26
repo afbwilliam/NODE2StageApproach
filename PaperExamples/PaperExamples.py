@@ -4,7 +4,10 @@ Created on Fri Jun 19 09:48:20 2020
 
 @author: Afbwi
 """
-# Now testing a better fit for last four points
+''' This code fits NODEs to Penicillin, Styrene, and Lotka-Volterra data.
+  States and derivatives estimated from this code can be used to fit
+  ODE model parameters in the pyomo code found in the same folder. 
+  '''
 import argparse
 import time
 import numpy as np
@@ -37,18 +40,18 @@ parser.add_argument('--batch_size', type=int, default=20)
 parser.add_argument('--niters', type=int, default=3220) #changed from 2000
 parser.add_argument('--test_freq', type=int, default=4) #changed from 20
 args = parser.parse_args()
-# args.mod = 'rober' #LoVo, RevRxn, Sty, Pen, daMKM, dcMKM, TPFR, rober, LoVolt, MAPK
-args.viz = None #Subplots, ClearGraph, None
-args.onerun = False #--> Reduces # of runs to 1
-noise = 0.01        #0, 0.01, 0.05, 0.10
-# N_dat = 10          # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
-N_Bsteps = 3        #5, N_dat -1 or length of t
+# args.mod = 'LoVo' #LoVo, Sty, Pen
+args.viz = None      #Subplots, ClearGraph, None
+args.onerun = False  #Reduces # of runs to 1
+noise = 0.05         #0, 0.01, 0.05, 0.10
+# N_dat = 10         # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
+N_Bsteps = 3         #5, N_dat -1 or length of t
 args.rtol=10**-6
 # lamb = 1e-5;        #1e-4, 1e-5, 1e-6  
 tot_lamb = 100        #100 when Physics == True
-MC_lamb = 100     
+MC_lamb = 100         #Weighting for error term     
 learning_rate = 0.1*10
-# N_hnodes = 10       #5, 7, 10
+# N_hnodes = 10       #10, 20
 omitIC = 0
 Transform = False; Physics = False
 SIC = False; MIC = True # Single or multiple integration Intervals 
@@ -67,11 +70,11 @@ row = 0 # row of hyper_param df
 #         for N_hnodes in [10,20]:
 #             for lamb in [1e-4,1e-6]:
 #                 print('Mod, Noise, Hid Nodes, Reg:',args.mod,noise,N_hnodes,lamb)
-# Test a single hyperparameter
+# Test a single set of hyperparameters
 for args.mod in ['Sty']:
     for N_hlayers in [1]:
         for N_hnodes in [10]:
-            for lamb in [1e-6]:
+            for lamb in [1e-4]:
                 print('Mod, Noise, Hid Nodes, Reg:',args.mod,noise,N_hnodes,lamb)
     
                 # =============================================================================
@@ -172,19 +175,8 @@ for args.mod in ['Sty']:
                 min_y = np.amin(np.amin(batch_y.numpy(),axis=1),axis=0) #for scaling dy
                 #min_y = np.zeros(N_vars)
                 
-                if args.mod == 'daMKM' or args.mod == 'dcMKM':# or args.mod == 'Pen': #Only scale by maximum
-                    MMS = MMScaler(args,torch.ones(N_vars),torch.zeros(N_vars)*1.0) # No scaling
-                    # MMS = MMScaler(args,torch.tensor(max_y),torch.zeros(N_vars)*1.0)
-                    batch_y2d = MMS.transform(batch_y.reshape((-1,N_vars)))
-                elif args.mod == 'TPFR': #This is a hack
-                    MMS = MMScaler(args,torch.ones(N_vars)*2,torch.zeros(N_vars)*1.0)
-                    batch_y2d = MMS.transform(batch_y.reshape((-1,N_vars)))
-                elif args.mod == 'rober':
-                    MMS = MMScaler(args,torch.tensor(max_y),torch.zeros(N_vars)*1.0)
-                    batch_y2d = MMS.transform(batch_y.reshape((-1,N_vars)))#,
-                else:
-                    MMS = MMScaler(args) #MinMaxScaler()
-                    batch_y2d = MMS.fit_transform(batch_y.reshape((-1,N_vars)))#,
+                MMS = MMScaler(args) #MinMaxScaler()
+                batch_y2d = MMS.fit_transform(batch_y.reshape((-1,N_vars)))#,
                 
                 batch_y = batch_y2d.reshape((N_runs,len(idx),N_vars)).clone().detach()
                 true_y2d = true_y[:,idx,:].reshape((-1,N_vars)).clone().detach()
@@ -361,9 +353,6 @@ for args.mod in ['Sty']:
                         N_inputs = 3; N_outputs = 3
                     if args.mod == 'Sty':
                         N_inputs = 6; N_outputs = 6
-                    if args.mod == 'TPFR':
-                        # This is super hacky, need to add for dca/dx output
-                        N_inputs = 3; N_outputs = 2
                     
                     funct = ODEFunct(N_inputs,N_outputs,N_hnodes)
                     pred_y = odeint(funct, 
@@ -381,8 +370,6 @@ for args.mod in ['Sty']:
                     ii = 0
                     if args.viz != None:
                         vis = visuals(args,N_vars)
-                
-                    
                     if N_hlayers == 1:
                         # Single NN
                         params = list(funct.parameters()) #+list([batch_y0])#+ list([k])
@@ -505,12 +492,7 @@ for args.mod in ['Sty']:
                 for N_var in range(0,N_vars):
                     MAE[N_var] = torch.sum(abs(pred_y[:,idx,N_var] - sol[:,idx,N_var])).numpy()/(j*len(idx))
                 MAE[N_var+1] = sum(MAE)/N_vars
-                
-                #if args.mod == 'Pen':
-                #    MAE[0] = torch.sum(abs(pred_y[:,idx,0] - sol[:,idx,0])).numpy()/(N_runs*len(idx))
-                #    MAE[1] = torch.sum(abs(pred_y[:,idx,1] - sol[:,idx,1])).numpy()/(N_runs*len(idx))
-                #    MAE[2] = torch.sum(abs(pred_y[:,idx,2] - sol[:,idx,2])).numpy()/(N_runs*len(idx))
-                
+                                
                 df_hyper.loc[row] = [args.mod,noise,lamb,N_hnodes,learning_rate,'tanh',
                                 args.N_steps,res[0],res[1],res[2],MSE_T,MSE_N,
                                 MAE[N_vars], MSE_Tscld, MSE_Nscld]
