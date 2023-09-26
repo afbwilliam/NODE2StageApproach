@@ -8,6 +8,8 @@ Code was tested using the following Python modules:
 * Python 3.10.11
 * Pytorch 1.12.1
 
+For examples using pyomo for parameter estimation, installation of pyomo w/ipopt is required.  This [website](https://ndcbe.github.io/CBE60499/01.00-Pyomo-Introduction.html) offers a good walkthrough for installing these.
+
 ## Background
 Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning data-driven model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train when directly fit to data.  Merging the benefits of both modeling approaches, the NODE 2-Stage (i.e., Indirect) Approach consists of 1) fitting a Neural ODE to time-series or spatial data and 2) using the Neural ODE’s derivative estimates to estimate the parameters of a mechanistic ODE.  This enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
 
