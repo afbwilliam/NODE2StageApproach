@@ -32,7 +32,9 @@ from Visualize import plot_LoVody, plot_LoVo
 # This code worked with python-3.6.9, pytorch=1.3.1
 np.random.seed(84)
 
-# Set default args
+# =============================================================================
+# # Set default hyperparameters and training conditions
+# =============================================================================
 #parser.add_argument('--data_size', type=int, default=1000)
 parser = argparse.ArgumentParser('Styrene demo')
 parser.add_argument('--batch_time', type=int, default=10)
@@ -40,20 +42,19 @@ parser.add_argument('--batch_size', type=int, default=20)
 parser.add_argument('--niters', type=int, default=3220) #changed from 2000
 parser.add_argument('--test_freq', type=int, default=4) #changed from 20
 args = parser.parse_args()
-# args.mod = 'LoVo' #LoVo, Sty, Pen
-args.viz = None      #Subplots, ClearGraph, None
-args.onerun = False  #Reduces # of runs to 1
-noise = 0.05         #0, 0.01, 0.05, 0.10
-# N_dat = 10         # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
-N_Bsteps = 3         #5, N_dat -1 or length of t
+# args.mod = 'LoVo'    #LoVo, Sty, Pen; Model to fit
+args.viz = None        #Subplots, ClearGraph, None; Choose graphs to plot
+args.onerun = False    #Reduces # of runs to 1
+noise = 0.05           #0, 0.01, 0.05, 0.10; Level of noise
+# N_dat = 10           # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
+N_Bsteps = 3           #5, N_dat -1 or length of t; Size of overlapping intervals
 args.rtol=10**-6
-# lamb = 1e-5;        #1e-4, 1e-5, 1e-6  
-tot_lamb = 100        #100 when Physics == True
-MC_lamb = 100         #Weighting for error term     
-learning_rate = 0.1*10
-# N_hnodes = 10       #10, 20
-omitIC = 0
-Transform = False; Physics = False
+# lamb = 1e-5;         #1e-4, 1e-5, 1e-6  
+tot_lamb = 100         #Weighting for error term
+MC_lamb = 100          #Weighting for error term     
+learning_rate = 0.1*10 #Optimzer learning rate
+# N_hnodes = 10        #10, 20; Number of hidden nodes
+omitIC = 0              # Omit Initial Conition if >0
 SIC = False; MIC = True # Single or multiple integration Intervals 
 
 # Create hyperparameter dataframe
@@ -110,16 +111,13 @@ for args.mod in ['Sty']:
 
                 df_sol = pd.read_csv(file)
                 t = df_sol[df_sol['Run'] == 0]['t'].to_numpy()#[::-1]#[5:]#[:20]
-                if Transform == True: #Switch time from exp to linear scale
-                    t = np.log(t)
-                    pass
                 # Reduce to 1 Run: Used specifically for NN vs. NODE comparison.
                 #   Also being used to fit small NODE in pyomo
                 if args.onerun == True:
                     df_sol = df_sol[df_sol['Run'] == 0] 
                     print('Warning: Comparing NNs vs NODEs')
                 
-                N_t = len(t)                    # Number to time points
+                N_t = len(t)                    # Number of time points
                 N_runs = df_sol['Run'].max()+1  # Number of run conditions
                 N_vars = len(states)            # Number of state vars
                 N_zvars = len(controls)
@@ -137,7 +135,7 @@ for args.mod in ['Sty']:
                 
 
                 # =============================================================================
-                # #Forward problem and functions
+                # # Prepare data for training
                 # =============================================================================
                 # Collect data -- Single IC
                 true_y0 = torch.tensor(sol[:,0,:],dtype=torch.float32) # true init cond
@@ -154,11 +152,6 @@ for args.mod in ['Sty']:
                     N_dat = len(idx)
                 
                 true_t = t[idx]#[::-1].copy()
-                
-                # Scale true_y
-                dum = torch.log(true_y[:,:,0]).numpy()
-                dum = true_y[:,:,0].numpy()
-                #true_y[:,:,0] = torch.log(true_y[:,:,0])
                 
                 # Add noise
                 batch_y = true_y[:,idx,:]       # data + meas noise
@@ -228,10 +221,8 @@ for args.mod in ['Sty']:
                 torch.manual_seed(34) 
                 # sys.exit()
                 # =============================================================================
-                # # Purely data-driven ODE, dXdt = NN(Ci,T)
+                # # Train data-driven NODE
                 # =============================================================================
-                # Code works, good derivative estim at 0 noise
-                # No control vars used
                 class ODEFunct(nn.Module):
                     def __init__(self,N_inputs,N_outputs,N_hnodes):
                         super(ODEFunct, self).__init__()
@@ -450,6 +441,7 @@ for args.mod in ['Sty']:
                     print('Sim time: ',tot_time)
                     return funct, [itr,losses[0].detach().numpy(),tot_time]
                 
+                # Initiate training
                 idx = np.round(np.linspace(0, len(t) -1, N_dat)).astype(int) # 10 data points
                 if __name__ == '__main__':
                     if args.mod == 0:#'Pen' or args.mod == 'Sty':
@@ -504,11 +496,6 @@ for args.mod in ['Sty']:
                     # dum = MMS.transform(pred_y[N_run])#,dtype=torch.float32)
                     dy.append(funct(t,dum,z[N_run],t).detach().numpy()*(MMS.max_y.numpy() - MMS.min_y.numpy()))
                 pred_dy = np.stack(dy)   
-                if Transform == True:
-                    # multiply derivs by exp(t)
-                    dum = pred_dy
-                    pred_dy = pred_dy*(1/np.exp(t.reshape(-1,1)))
-                    # dum = pred_dy*(1/np.exp(t.reshape(-1,1)))
                 pred_dy = torch.tensor(pred_dy,dtype=torch.float32)
                 # if MIC == False: # N_runs has not changed
                 MAE_dy = torch.sum(abs(pred_dy[:,idx,:] - true_dy[:,idx,:])).numpy()/(N_runs*len(idx)*N_vars)
@@ -528,8 +515,8 @@ for args.mod in ['Sty']:
                 df_pred_y['t'] = np.tile(t,len(torch_y[:,0,0]))
                 df_pred_y['Run'] = np.repeat(np.arange(len(torch_y[:,0,0])),N_t)
                 
-                dum = torch_y2d #.reshape(len(idx)*N_runs,N_vars)*1
-                dum2 = MMS.inverse_transform(dum).numpy()#dum*(max_y - min_y) + min_y                    
+                dum = torch_y2d 
+                dum2 = MMS.inverse_transform(dum).numpy()                    
                 
                 df_batch_y = pd.DataFrame(data=dum2,
                                       columns=states)
@@ -569,7 +556,7 @@ for args.mod in ['Sty']:
                 row = row+1
                 N_run = 0
 
-                
+# Save table of tested hyperparameters                
 # df_hyper.to_csv(r'tuningdata/hyperparam_res.csv',index = None, header=True) 
 # sys.exit()
 
@@ -594,17 +581,6 @@ if args.mod == 'Pen':
 if args.mod == 'LoVo':
     plot_LoVo(t,pred_y[N_run],torch_y[N_run],true_y[N_run],idx,title,noise,N_hnodes,final=True)
     plot_LoVody(t,pred_dy[N_run],true_dy[N_run],idx,title,noise,N_hnodes,final=True)
-if args.mod == 'daMKM' or args.mod == 'dcMKM':
-    plotMKM(t,pred_y[N_run],torch_y[N_run],sol[N_run],idx,title)
-    # if Transform == True:
-    #     plot_MKMdy(t,dum[N_run],true_dy[N_run]*(np.exp(t.reshape(-1,1))),idx,title,noise)
-    # else:
-    plot_MKMdy(t,pred_dy[N_run],true_dy[N_run],idx,title,noise)
-if args.mod == 'rober':
-    plot_robert(t,pred_y[N_run],torch_y[N_run],idx,title,noise)
-if args.mod == 'MAPK':
-    plot_MAPK(t,pred_y[N_run],torch_y[N_run],idx,title,)
-    plot_MAPKdy(t,pred_dy[N_run],true_dy[N_run],idx,title,)
 
 
 sys.exit()
