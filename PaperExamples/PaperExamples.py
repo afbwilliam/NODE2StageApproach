@@ -21,8 +21,8 @@ import os
 import imageio as io
 import shutil
 
-from AG_Funs import odeint, Store, odefunEB, odefunPen,\
-    compute_losses, Check_point, MMScaler, MScaler, odefunEB2, odedcMKM2
+from AG_Funs import odeint, Store, \
+    compute_losses, Check_point, MMScaler, MScaler
 from sklearn.preprocessing import MinMaxScaler
 from Visualize import visuals
 import pickle
@@ -83,7 +83,6 @@ for args.mod in ['Sty']:
                 # =============================================================================
                 if args.mod == 'Pen':
                     file = 'data/PenBatch_0Noise.csv'
-                    function = odefunPen
                     states = ['tB','tS','tP','tV']
                     controls = ['Sf','F']
                     derivs = ['dBdt','dSdt','dPdt','dVdt']
@@ -91,7 +90,6 @@ for args.mod in ['Sty']:
                 #    lamb = 1e-5;       learning_rate = 0.1
                 elif args.mod == 'Sty':
                     file = 'data/NonIso_PFR.csv'
-                    function = odefunEB
                     states = ['Temp','EB','Sty','H2','BeEt','ToMe'] #df_sol.drop(columns=['t','Run']).columns.values
                     controls=[] #['Temp'] # dummy var
                     derivs = ['dTdt','dEBdt','dStydt','dH2dt','dBeEtdt','dToMedt']
@@ -99,7 +97,6 @@ for args.mod in ['Sty']:
                 elif args.mod == 'LoVo':
                     # idxes = [0,1,2,3,14,15,16] # sparse
                     file = 'data/LoVo.csv'
-                #    function = LoVo
                     states = ['x','y']
                     controls = []#['x'] # dummyZ var
                     derivs = ['dxdt','dydt']
@@ -570,6 +567,9 @@ from Visualize import plot_LoVody, plot_LoVo, plot_temp, plot_pred, plot_dy, \
 N_run = 0 # Choose which run to plot
 title = 'Fitted NODE Simulation'
 if args.mod == 'Sty':
+    pred_y[:,:,0] = pred_y[:,:,0]+800;
+    torch_y[:,:,0] = torch_y[:,:,0]+800;
+    sol[:,:,0] = sol[:,:,0]+800;
     plot_temp(t,pred_y[N_run],torch_y[N_run],sol[N_run],idx,title)
     plot_pred(t,pred_y[N_run],torch_y[N_run],sol[N_run],idx,title)
     plot_dy(t,pred_dy[N_run],true_dy[N_run],idx,title,noise)
