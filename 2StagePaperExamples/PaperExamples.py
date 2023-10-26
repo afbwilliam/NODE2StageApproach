@@ -29,8 +29,8 @@ import pickle
 import sys
 
 from Visualize import plot_LoVody, plot_LoVo
-# This code worked with python-3.6.9, pytorch=1.3.1
-np.random.seed(84)
+
+
 
 # =============================================================================
 # # Set default hyperparameters and training conditions
@@ -42,20 +42,21 @@ parser.add_argument('--batch_size', type=int, default=20)
 parser.add_argument('--niters', type=int, default=3220) #changed from 2000
 parser.add_argument('--test_freq', type=int, default=4) #changed from 20
 args = parser.parse_args()
-# args.mod = 'LoVo'    #LoVo, Sty, Pen; Model to fit
-args.viz = None        #Subplots, ClearGraph, None; Choose graphs to plot
-args.onerun = False    #Reduces # of runs to 1
-noise = 0.05           #0, 0.01, 0.05, 0.10; Level of noise
-# N_dat = 10           # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
-N_Bsteps = 3           #5, N_dat -1 or length of t; Size of overlapping intervals
+# args.mod = 'LoVo'     #LoVo, Sty, Pen; Model to fit
+args.viz = None         #Subplots, ClearGraph, None; Choose graphs to plot
+args.onerun = False     #Reduces # of runs to 1
+noise = 0.05            #0, 0.01, 0.05, 0.10; Level of noise (%/100)
+# N_dat = 10            # cannot be larger than N_t - N_Bsteps, otherwise indices are repeated
+N_Bsteps = 3            #5, N_dat -1 or length of t; Size of overlapping intervals
 args.rtol=10**-6
-# lamb = 1e-5;         #1e-4, 1e-5, 1e-6  
-tot_lamb = 100         #Weighting for error term
-MC_lamb = 100          #Weighting for error term     
-learning_rate = 0.1*10 #Optimzer learning rate
-# N_hnodes = 10        #10, 20; Number of hidden nodes
-omitIC = 0              # Omit Initial Conition if >0
-SIC = False; MIC = True # Single or multiple integration Intervals 
+# lamb = 1e-5;          #1e-4, 1e-5, 1e-6  
+tot_lamb = 100          #Weighting for error term
+MC_lamb = 100           #Weighting for error term     
+learning_rate = 0.1*10  #Optimzer learning rate
+# N_hnodes = 10         #10, 20; Number of hidden nodes
+omitIC = 0              #Omit Initial Conition if >0
+SIC = False; MIC = True #Single or multiple integration Intervals
+save_data = False       #Whether to save results to csv file
 
 # Create hyperparameter dataframe
 columns = ['Model','Noise Lvl','Reg weight','Hid Nodes','Lrn rate','Activ Func',
@@ -76,6 +77,9 @@ for args.mod in ['Sty']:
     for N_hlayers in [1]:
         for N_hnodes in [10]:
             for lamb in [1e-4]:
+                # Fix seed so that Neural ODE param init and noise is the same each time
+                np.random.seed(84)
+                torch.manual_seed(34) 
                 print('Mod, Noise, Hid Nodes, Reg:',args.mod,noise,N_hnodes,lamb)
     
                 # =============================================================================
@@ -215,7 +219,7 @@ for args.mod in ['Sty']:
 
                 
                 y0 = MMS.transform(torch_y[:,0,:])#sol[:,0,:]
-                torch.manual_seed(34) 
+
                 # sys.exit()
                 # =============================================================================
                 # # Train data-driven NODE
@@ -545,9 +549,10 @@ for args.mod in ['Sty']:
                     # dum = load_obj('dictNODE{}{}N'.format(args.mod,int(noise*100)))
 
                     # Save batch, predicted dydt and predicted y data respecitvely
-                    df_batch_y.to_csv(r'data/batch{}_{}Noise.csv'.format(args.mod,int(noise*100)),index= None, header=True)
-                    df_pred_dt.to_csv(r'data/pred{}_dt{}Noise.csv'.format(args.mod,int(noise*100)),index = None, header=True)  #Change based on noise, # of samples, MVs
-                    df_pred_y.to_csv(r'data/pred{}_y{}Noise.csv'.format(args.mod,int(noise*100)),index = None, header=True) 
+                    if save_data == True: 
+                        df_batch_y.to_csv(r'data/batch{}_{}Noise.csv'.format(args.mod,int(noise*100)),index= None, header=True)
+                        df_pred_dt.to_csv(r'data/pred{}_dt{}Noise.csv'.format(args.mod,int(noise*100)),index = None, header=True)  #Change based on noise, # of samples, MVs
+                        df_pred_y.to_csv(r'data/pred{}_y{}Noise.csv'.format(args.mod,int(noise*100)),index = None, header=True) 
 
                 
                 row = row+1

@@ -1,4 +1,4 @@
-# NODE 2-Stage Approach
+# Nueral ODE 2-Stage Approach
 The examples in this repository illustrate the Neural ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for hyperparameter tuning of Neural ODEs to better enable them to learn system dynamics from training data.
 
 ## Requirements
