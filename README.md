@@ -16,12 +16,14 @@ Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learnin
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/2-stage-approach.png)
 
 ## The Advantage of Hybridizing First-Principles and Machine Learning
-A simple example of using the Neural ODE 2-Stage Approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py.py) file.
+A simple example of using the Neural ODE 2-Stage Approach to fit ODE model parameters can be found in the [`KineticRxn/AG_Rxn+Deg.py`](./KineticRxn/AG_Rxn+Deg.py) file.
 
 In this example, the Neural ODE easily fits the measured time-series data.  However, when the fitted Neural ODE later simulates the same system for conditions outside the range of training data, as shown in the below graphic, the predictions of the fitted Neural ODE diverge from the true dyanmics.  In contrast, if the Neural ODE derivative estimates are used via the 2-stage approach to train the parameters of a correctly formulated (i.e., first-principles or mechanistically-inspired) ODE model, this model can be more accurate, even when predicting the system dynamics for conditions outside the range of the original training data.
 
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/Extrap.png)
 *Simulations of fitted Neural ODE (left) and fitted mechanistic ODE (right) on extrapolating conditions*
+
+Additional examples of applying Neural ODEs to estimate the parameters of mechanistic ODEs can be found in the [`2StagePaperExamples`](./2StagePaperExamples) folder.  Examples of interpolating sparse, multi-experiment data via Neural ODEs can be found in the [`SparsityPaperExamples`](./SparistyPaperExamples) folder.
 
 ## Multiple Overlapping Integration Intervals – Effect on Over-fitting and Over-Smoothing Data
 To optimally train a Neural ODE, Neural ODE hyperparameters must be tuned to avoid issues of both overfitting and over-smoothing.  A key hyperparameter for this is the length of the interval of integration used during training.  To help visualize how breaking integration into multiple intervals prevents over-smoothing, Neural ODE training on data from the Lotka-Volterra system is illustrated below using two different lengths of integration.  Clearly, simulating the Neural ODE across the longer interval of integration at every iteration of training ultimately converges to a model that “over-smooths” the dynamics.  In contrast, by breaking the Neural ODE predictions to cover shorter, overlapping intervals, the NODE captures the true dynamics and can avoid the local minimum wherein the model over-smooths the system response.
