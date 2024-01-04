@@ -1,5 +1,5 @@
 # Nueral ODE 2-Stage Approach
-The examples in this repository illustrate the Neural ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for hyperparameter tuning of Neural ODEs to better enable them to learn system dynamics from training data.
+The examples in this repository illustrate the Neural ODE (NODE) 2-Stage Approach to parameter estimation of Ordinary Differential Equations (ODEs) (see reference [1]). Examples also illustrate tips for hyperparameter tuning of Neural ODEs to better enable them to learn system dynamics from training data (see reference [2]).
 
 ## Requirements
 
@@ -11,7 +11,7 @@ Code was tested using the following Python modules:
 For examples using pyomo for parameter estimation, installation of pyomo w/ipopt is required.  This [website](https://ndcbe.github.io/CBE60499/01.00-Pyomo-Introduction.html) offers a good walkthrough for installing these.
 
 ## Background
-Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning data-driven model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [2]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train when directly fit to data.  Merging the benefits of both modeling approaches, the NODE 2-Stage (i.e., Indirect) Approach consists of 1) fitting a Neural ODE to time-series or spatial data and 2) using the Neural ODE’s derivative estimates to estimate the parameters of a mechanistic ODE.  This enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
+Neural Ordinary Differential Equations (Neural ODEs or NODEs) are a deep learning data-driven model with the ability to learn the trajectories of highly nonlinear spatio-temporal dynamics (see reference [3]).  However, like other machine learning frameworks, their ability to extrapolate to conditions beyond the range of training data is limited.  ODEs based on first-principles or domain knowledge (i.e., mechanistic ODEs) have the potential to extrapolate beyond measured conditions, but they can be computationally onerous to train when directly fit to data.  Merging the benefits of both modeling approaches, the NODE 2-Stage (i.e., Indirect) Approach consists of 1) fitting a Neural ODE to time-series or spatial data and 2) using the Neural ODE’s derivative estimates to estimate the parameters of a mechanistic ODE.  This enables a modeler to exploit the rapid and flexible training of Neural ODEs to fit the parameters of a mechanistic ODE, resulting in a final model that better generalizes to conditions of interest.
 
 ![alt text](https://github.com/afbwilliam/NODE2StageApproach/blob/main/KineticRxn/visuals/2-stage-approach.png)
 
@@ -45,11 +45,13 @@ Longer  Intervals          |  Shorter Intervals
 A useful heuristic to follow to minimize Neural ODE overfitting is to choose the longest interval of integration during Neural ODE training that does not cause the fitted Neural ODE to over-smooth the data.  
 
 ## References
-Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the paper:
+Further reading on the advantages of Neural ODEs when applying the 2-stage approach to ODE parameter estimation can be found in the papers:
 
 1) Bradley, W. and F. Boukouvala, *Two-Stage Approach to Parameter Estimation of Differential Equations Using Neural ODEs.* Industrial & Engineering Chemistry Research, 2021. [[paper]](https://pubs.acs.org/doi/10.1021/acs.iecr.1c00552)
 
+2) Bradley, W., Volkovinsky, R., & Boukouvala, F. (2024). *Enabling global interpolation, derivative estimation and model identification from sparse multi-experiment time series data via neural ODEs.* Engineering Applications of Artificial Intelligence, 130, 107611. [[paper]](https://doi.org/https://doi.org/10.1016/j.engappai.2023.107611)
+
 Code in this repository is modified from earlier work described in the following reference:
 
-2) Ricky T. Q. Chen, Yulia Rubanova, Jesse Bettencourt, David Duvenaud. *Neural Ordinary Differential Equations.* Advances in Neural Information Processing Systems, 2018. [[arxiv]](https://arxiv.org/abs/1806.07366)
+3) Ricky T. Q. Chen, Yulia Rubanova, Jesse Bettencourt, David Duvenaud. *Neural Ordinary Differential Equations.* Advances in Neural Information Processing Systems, 2018. [[arxiv]](https://arxiv.org/abs/1806.07366)
 
