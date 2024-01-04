@@ -49,7 +49,7 @@ Further reading on the advantages of Neural ODEs when applying the 2-stage appro
 
 1) Bradley, W. and F. Boukouvala, *Two-Stage Approach to Parameter Estimation of Differential Equations Using Neural ODEs.* Industrial & Engineering Chemistry Research, 2021. [[paper]](https://pubs.acs.org/doi/10.1021/acs.iecr.1c00552)
 
-2) Bradley, W., Volkovinsky, R., & Boukouvala, F. (2024). *Enabling global interpolation, derivative estimation and model identification from sparse multi-experiment time series data via neural ODEs.* Engineering Applications of Artificial Intelligence, 130, 107611. [[paper]](https://doi.org/https://doi.org/10.1016/j.engappai.2023.107611)
+2) Bradley, W., R. Volkovinsky, and F. Boukouvala, *Enabling global interpolation, derivative estimation and model identification from sparse multi-experiment time series data via neural ODEs.* Engineering Applications of Artificial Intelligence, 2024. 130: p. 107611. [[paper]](https://doi.org/https://doi.org/10.1016/j.engappai.2023.107611)
 
 Code in this repository is modified from earlier work described in the following reference:
 
